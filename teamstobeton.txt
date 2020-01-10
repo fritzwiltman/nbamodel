@@ -1,0 +1,1 @@
+{"LAST_SCAN": "", "due_for_win": {"BROOKLYN": 7, "CHICAGO": 5, "MILWAUKEE": 4, "BOSTON": 3}, "due_for_loss": {"OKLAHOMA+CITY": 8, "NEW+ORLEANS": 7, "MEMPHIS": 3, "SAN+ANTONIO": 3}}
