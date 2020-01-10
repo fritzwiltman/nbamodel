@@ -10,7 +10,7 @@ def team_analysis(team_name):
         data = json.load(json_file)
         ats_list = data[team_name][6][1]
 
-    # Trying again if the list is messed up until it's not - shouldnt be though
+    # Trying again if the list is messed up until it's not - sometimes there is a rotten data pull in nbabettingmodel.py
     inc = 1
     while ats_list == []:
         team = team_name.strip()
