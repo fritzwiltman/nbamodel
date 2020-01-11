@@ -24,8 +24,10 @@ The primary function of this project is to scan every NBA team's game log for th
 * Currently building an AWS Lambda to automatically run the `main()` method daily so it does not have to be run manually. Springing a cron expression is an alternative to automatically running these scripts, but that is run through a user's system, and is dependent on the machine being alive, other factors.
 
 
-## Using `nbabettingmodel.py` to gather different types of data
+## Using `datascraper.py` instead of `nbabettingmodel.py` to gather different types of data
 Analyzing this stuff comes in two steps - actually collecting the data and storing it so it is easily accessible, then going through your means of storing it and analzying the numbers. This is the first, collecting the data.
+
+I just created a copy of `nbabettingmodel` and made it a script rather than a class so it is easier to use. I added a `main()` function in it so you can call everything you want just in that script by `python3 datascraper.py`. The stuff below is about the `nbabettingmodel.py` structure, which is very similar to `datascraper.py`. The main difference is there is no object creation, so when you want to call any functions you don't need to create an object or anything. The other main difference is I added two parameters to the function, `team_name` and `year`. These two parameters are plugged into the url and determine the data you collect. Everything else is pretty much the same. You can keep reading if you want to understand how the `data_collection()` function works. 
 
 This file create an object that takes in a team name, and currently it just collects data on that team based on the url it is plugged into (`team_url` in the `data_collection()` method). In the current case, this collects the game log from each team's current season. If you want to get a different season's data, simply change the url to your liking. For example, if you wanted to get every team's 2018-2019 game log, you just need to simply change the year in the url to 2019. You can browse [Don Best](donbest.com) and look through all kinds of information. Typically, I go to a sport I am trying to analyze, then go to ATS stats, and navigate through there.
 
