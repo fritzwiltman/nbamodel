@@ -11,7 +11,7 @@ import pandas as pd
 def create_and_send_email(): 
     fromaddr = "drewpeacockslocks@gmail.com"
     toAddr = ["fgwilt1@gmail.com", "fwiltman@terpmail.umd.edu"]
-    # toAddr = ["fgwilt1@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
+    toAddr = ["fgwilt1@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = ', '.join(toAddr)
