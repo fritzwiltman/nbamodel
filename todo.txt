@@ -1,0 +1,9 @@
+seasonanalysis.py
+When compiling season stats: check first if two teams playing each other are both due for the same outcome, if so fade; check if two teams playing each other are due for opposite outcomes; if so, add unit bets (up to three? four?)
+Check with dad: if you bet 3 units, is that considered 3 wins?
+
+
+emailsender.py
+If two teams playing each other are both due for the same outcome, do not recommend this game to bet on - have them both listed, but note to fade this game
+If two teams playing each other are due for opposite outcomes, add units on this bet
+Should it still be split into "Teams due for win" and "Teams due for loss"?
