@@ -11,7 +11,7 @@ import pandas as pd
 def create_and_send_email(): 
     fromaddr = "drewpeacockslocks@gmail.com"
     toAddr = ["fgwilt1@gmail.com", "fwiltman@terpmail.umd.edu"]
-    toAddr = ["fgwilt1@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
+    # toAddr = ["fgwilt1@gmail.com", "mbrdgrs6@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = ', '.join(toAddr)
@@ -39,7 +39,7 @@ def create_subject_header():
 
 def create_plain_body():
     teams_due_for_win = "Teams due for a win:\n"
-    with open('teamstobeton.txt', 'r') as json_file:
+    with open('teamstobeton.txt', 'r+') as json_file:
         data = json.load(json_file)
         for team in data["due_for_win"]:
             teams_due_for_win += "\t"
@@ -47,17 +47,22 @@ def create_plain_body():
 
 
 def create_html_body():
-    teams_due_for_win = ""
-    teams_due_for_loss = ""
-    with open('teamstobeton.txt', 'r') as json_file:
-        data = json.load(json_file)
+    teams_due_for_win = []
+    teams_due_for_loss = []
+    with open('teamstobeton.txt', 'r+') as json_file:
+        data = json.load(json_file)                
         for team in data["due_for_win"]:
-            formatted_team = "<li>{} has lost {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_win"][team], get_recommended_units(int(data["due_for_win"][team])), get_next_game(team))
-            teams_due_for_win += formatted_team
+            next_game = get_next_game(team)
+            formatted_team = "<li>{} has lost {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_win"][team], get_recommended_units(int(data["due_for_win"][team])), next_game)
+            teams_due_for_win.append(formatted_team) 
 
         for team in data["due_for_loss"]:
-            formatted_team = "<li>{} has won {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_loss"][team], get_recommended_units(int(data["due_for_loss"][team])), get_next_game(team))
-            teams_due_for_loss += formatted_team
+            next_game = get_next_game(team)
+            formatted_team = "<li>{} has won {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_loss"][team], get_recommended_units(int(data["due_for_loss"][team])), next_game)
+            teams_due_for_loss.append(formatted_team)
+
+        # teams_due_for_win = sort_games(teams_due_for_win)
+        # teams_due_for_loss = sort_games(teams_due_for_loss)
 
     html = """\
     <html>
@@ -81,9 +86,20 @@ def create_html_body():
         </ul> -->
     </body>
     </html>
-    """.format(teams_due_for_win, teams_due_for_loss)
+    """.format(sort_games(teams_due_for_win), sort_games(teams_due_for_loss))
 
     return html
+
+
+def sort_games(games_list):
+    game_today = ""
+    game_upcoming = ""
+    for team in games_list:
+        if "TODAY" in team:
+            game_today += team
+        else: game_upcoming += team
+    all_games = game_today + game_upcoming
+    return all_games
 
 
 def get_recommended_units(consecutive_outcomes):
