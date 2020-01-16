@@ -11,7 +11,7 @@ import pandas as pd
 def create_and_send_email(): 
     fromaddr = "drewpeacockslocks@gmail.com"
     toAddr = ["fgwilt1@gmail.com", "fwiltman@terpmail.umd.edu"]
-    # toAddr = ["fgwilt1@gmail.com", "mbrdgrs6@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
+    # toAddr = ["fgwilt1@gmail.com", "air.land96@gmail.com", "mbrdgrs6@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = ', '.join(toAddr)
@@ -52,17 +52,30 @@ def create_html_body():
     with open('teamstobeton.txt', 'r+') as json_file:
         data = json.load(json_file)                
         for team in data["due_for_win"]:
-            next_game = get_next_game(team)
-            formatted_team = "<li>{} has lost {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_win"][team], get_recommended_units(int(data["due_for_win"][team])), next_game)
+            next_game = data["due_for_win"][team][1][0]
+            next_opponent = data["due_for_win"][team][1][1]
+            if next_opponent in data["due_for_win"]:
+                formatted_team = "<li>{} has lost {} in a row, but playing {} who is also due for a win.<br>Recommended wager: <strong>Fade this game</strong>.</li><br>".format(team, data["due_for_win"][team][0], next_opponent)
+            elif next_opponent in data["due_for_loss"]:
+                next_opp_losses = int(data["due_for_loss"][next_opponent][0])
+                formatted_team = "<li>{} has lost {} in a row.<br>Their next opponent, {}, has won {} in a row and is due for a loss.<br>{}.<br>{}.</li><br>".format(team, data["due_for_win"][team][0], next_opponent, next_opp_losses, (get_recommended_units_for_double_bet(int(data["due_for_win"][team][0]), next_opp_losses)), next_game)
+            else:
+                formatted_team = "<li>{} has lost {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_win"][team][0], get_recommended_units(int(data["due_for_win"][team][0])), next_game)
             teams_due_for_win.append(formatted_team) 
 
         for team in data["due_for_loss"]:
-            next_game = get_next_game(team)
-            formatted_team = "<li>{} has won {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_loss"][team], get_recommended_units(int(data["due_for_loss"][team])), next_game)
+            next_game = data["due_for_loss"][team][1][0]
+            next_opponent = data["due_for_loss"][team][1][1]
+            if next_opponent in data["due_for_loss"]:
+                formatted_team = "<li>{} has won {} in a row, but playing {} who is also due for a loss.<br>Recommended wager: <strong>Fade this game</strong>.</li><br>".format(team, data["due_for_loss"][team][0], next_opponent)
+            elif next_opponent in data["due_for_win"]:
+                next_opp_losses = int(data["due_for_win"][next_opponent][0])
+                formatted_team = "<li>{} has won {} in a row.<br>Their next opponent, {}, has lost {} in a row and is due for a win.<br>Recommended wager: Wager is listed above in <strong>\"Teams due for win\"</strong> list under {}.<br>{}.</li><br>".format(team, data["due_for_loss"][team][0], next_opponent, next_opp_losses, next_opponent, next_game)
+            else:
+                formatted_team = "<li>{} has won {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_loss"][team][0], get_recommended_units(int(data["due_for_loss"][team][0])), next_game)
             teams_due_for_loss.append(formatted_team)
 
-        # teams_due_for_win = sort_games(teams_due_for_win)
-        # teams_due_for_loss = sort_games(teams_due_for_loss)
+
 
     html = """\
     <html>
@@ -110,71 +123,15 @@ def get_recommended_units(consecutive_outcomes):
     return recommended_units_string
 
 
+def get_recommended_units_for_double_bet(consecutive_outcomes1, consecutive_outcomes2):
+    recommended_units_string = "Recommended wager: <strong>(Double Wager) </strong>"
+    total_outcomes = consecutive_outcomes1 + consecutive_outcomes2
+    if (total_outcomes <= 7): recommended_units_string += "2 units"
+    elif (8 < total_outcomes <= 10): recommended_units_string += "3 units"
+    else: recommended_units_string += "4 units"
+    return recommended_units_string
+
+
 def get_next_game(team_name):
-    while True:
-        try:
-            team_url = 'http://www.donbest.com/nba/ats-stats/?page=nba/nbateam&teamid={}&season=2020'.format(team_name)
-            
-            # Create a handle, page, to handle the contents of the website
-            page = requests.get(team_url)
-
-            # Store the contents of the website under doc
-            doc = lh.fromstring(page.content)
-
-            # Parse data that are stored between <tr>..</tr> of HTML
-            tr_elements = doc.xpath('//tr')
-
-            # Create empty string to hold next game info
-            next_game = []
-            i=0
-            sanity_check = ""
-            inc = 0
-
-            while sanity_check != "Date":
-                inc += 1
-                if inc > 10: break
-                next_game = []
-                # For each row, store each first element (header) and an empty list
-                for t in tr_elements[6]:
-                    i += 1
-                    name = t.text_content()
-                    if i == 1: 
-                        sanity_check = name
-
-                    # Remove any unicode spaces
-                    try: name = name.replace(u'\xa0', u'')
-                    except: pass
-                    next_game.append((name, []))
-                
-            for j in range(7, 14):
-                T = tr_elements[j]
-
-                # If row is not of size 3, the //tr data the game log we are searching for
-                if len(T) != 3: break
-                i = 0
-
-                for t in T.iterchildren():
-                    data = t.text_content()
-
-                    # Convert numerical values to integers
-                    try: data = int(data)
-                    except: pass
-
-                    # Replace any unicode spaces with normal spaces
-                    try: data = data.replace(u'\xa0', u' ')
-                    except: pass
-
-                    # Append the data to the empty list of the i'th column
-                    next_game[i][1].append(data)
-                    i += 1
-
-            if next_game[0][1][0] == date.today().strftime("%m/%d"):
-                message = "Next game <u><strong>(TODAY)</strong></u>: " + " " + next_game[0][1][0] + " " + next_game[1][1][0] + " " + next_game[2][1][0]
-            else: 
-                message = "Next game: " + " " + next_game[0][1][0] + " " + next_game[1][1][0] + " " + next_game[2][1][0]
-            
-            return message
-
-        except:
-            continue
-        break
+    with open("teamstobeton.txt", "r") as json_file:
+        data = json.load(json_file)
