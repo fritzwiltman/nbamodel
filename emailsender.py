@@ -10,22 +10,21 @@ import pandas as pd
 
 def create_and_send_email(): 
     fromaddr = "drewpeacockslocks@gmail.com"
-    toAddr = ["fgwilt1@gmail.com", "fwiltman@terpmail.umd.edu"]
-    # toAddr = ["fgwilt1@gmail.com", "air.land96@gmail.com", "mbrdgrs6@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
+    toAddr = ""
+    bcc = ['fgwilt1@gmail.com', 'drewpeacockslocks@gmail.com', "fwiltman@umd.edu"]
+    # recepients = ["air.land96@gmail.com", "mbrdgrs6@gmail.com", "grant.abrams1@gmail.com", "ken.newmeyer@gmail.com", "jrwilt3@icloud.com", "benborucki13@gmail.com",  "jtoom13@gmail.com", "jacklombardo17@gmail.com", "rileycollins8244@gmail.com"]
     msg = MIMEMultipart()
     msg['From'] = fromaddr
-    msg['To'] = ', '.join(toAddr)
+    msg['To'] = toAddr
     subject = create_subject_header()
     msg['Subject'] = subject
-    # plain_body = create_plain_body()
     html_body = create_html_body()
-    plain_body = "BODY"
     msg.attach(MIMEText(html_body, 'html'))
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(fromaddr, "jtJGSVhyse9rzsV3")
     text = msg.as_string()
-    server.sendmail(fromaddr, toAddr, text)
+    server.sendmail(fromaddr, bcc + [toAddr], text)
     server.quit()
 
 
@@ -33,17 +32,7 @@ def create_subject_header():
     today = date.today()
     d = today.strftime("%B %d, %Y")
     full_subject_header = "Drew Peacock's NBA Locks - " + d
-    # print(full_subject_header)
     return full_subject_header
-
-
-def create_plain_body():
-    teams_due_for_win = "Teams due for a win:\n"
-    with open('teamstobeton.txt', 'r+') as json_file:
-        data = json.load(json_file)
-        for team in data["due_for_win"]:
-            teams_due_for_win += "\t"
-            # print(data["due_for_win"][team])
 
 
 def create_html_body():
@@ -74,8 +63,6 @@ def create_html_body():
             else:
                 formatted_team = "<li>{} has won {} in a row.<br>{}.<br>{}.</li><br>".format(team, data["due_for_loss"][team][0], get_recommended_units(int(data["due_for_loss"][team][0])), next_game)
             teams_due_for_loss.append(formatted_team)
-
-
 
     html = """\
     <html>
@@ -130,8 +117,3 @@ def get_recommended_units_for_double_bet(consecutive_outcomes1, consecutive_outc
     elif (8 < total_outcomes <= 10): recommended_units_string += "3 units"
     else: recommended_units_string += "4 units"
     return recommended_units_string
-
-
-def get_next_game(team_name):
-    with open("teamstobeton.txt", "r") as json_file:
-        data = json.load(json_file)
