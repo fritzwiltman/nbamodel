@@ -78,7 +78,7 @@ class TeamDataLog:
                 team_map["LAST_SCAN"] = d
 
                 # Dumping the team map of team_name: game_log to json file
-                with open('team_data/{}_data.txt'.format(self.team_name.strip()), 'w') as outfile:
+                with open('/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/team_data/{}_data.txt'.format(self.team_name.strip()), 'w+') as outfile:
                     json.dump(team_map, outfile)
 
             except:

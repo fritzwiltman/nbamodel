@@ -9,7 +9,7 @@ def team_analysis(team_name):
     # print("Analyzing {}".format(team_name))
     ats_list = []
     # Opening the team_name_data text file and saving the ats results in ats_list
-    with open('team_data/{}_data.txt'.format(team_name.strip())) as json_file:
+    with open('/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/team_data/{}_data.txt'.format(team_name.strip())) as json_file:
         data = json.load(json_file)
         if 6 < len(data[team_name]) and 1 < len(data[team_name][6]):
             ats_list = data[team_name][6][1]
@@ -23,7 +23,7 @@ def team_analysis(team_name):
         team_data.data_collection()
         inc += 1
 
-        with open('team_data/{}_data.txt'.format(team_name.strip())) as json_file:
+        with open('/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/team_data/{}_data.txt'.format(team_name.strip())) as json_file:
             data = json.load(json_file)
             ats_list = data[team_name][6][1]
        
@@ -42,7 +42,7 @@ def team_analysis(team_name):
     # print("consecutive outcomes of {}: {}".format(latest_outcome, consecutive_outcomes))
 
     try:
-        with open("teamstobeton.txt", "r+") as json_file:
+        with open("/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/teamstobeton.txt", "r+") as json_file:
             # Must dumps the data back into the file, make sure it removes and repaces, not append
             data = json.load(json_file)
 

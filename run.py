@@ -12,20 +12,11 @@ import time
 # Will eventually have to store the game log info in a database.        #
 #########################################################################
 
-# Dictionary to hold game log of each team
-team_game_log_dictionary = {}
-
-def gather_team_game_logs():
-    teams_file = open("teams.txt", "r")
-    for team in teams_file.readlines():
-        print(team)
-
-
 def main():
     print("Gathering information on each team...")
 
     # Checking to see when last scan was; if not today, then it will re-scan
-    with open("team_data/ATLANTA_data.txt", "r") as json_file:
+    with open("/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/team_data/ATLANTA_data.txt", "r") as json_file:
         data = json.load(json_file)
         if "LAST_SCAN" in data:
             last_scan = data["LAST_SCAN"]
@@ -38,7 +29,7 @@ def main():
 
     # Need to add error handling to nbabettingmodel.py when gathering data
     if last_scan != d:
-        team_file = open("teams.txt", "r")
+        team_file = open("/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/teams.txt", "r")
         for team in team_file:
             time.sleep(.300)
             team = team.strip()
@@ -48,12 +39,13 @@ def main():
 
 
     print("Analyzing each team's recent games...")
-    with open("teamstobeton.txt", "r") as json_file:
+    with open("/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/teamstobeton.txt", "r") as json_file:
         data = json.load(json_file)
-        team_file = open("teams.txt", "r")
+        team_file = open("/Users/Fritz/Fritz/SoftwareDev/nba_cover_checker/teams.txt", "r")
         for team in team_file:
             team = team.strip()
             ta.team_analysis(team)
+        
 
     print("Sending emails with new information...")
     emailsender.create_and_send_email()
