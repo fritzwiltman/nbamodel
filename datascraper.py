@@ -68,6 +68,7 @@ def data_collection(team_name, year):
             d = today.strftime("%m/%d")
             team_map["LAST_SCAN"] = d
 
+            
             # Dumping the team map of team_name: game_log to json file to specified directory
             file_directory_name = "yearly_data/{}/{}_data.txt".format(year, team_name)
             os.makedirs(os.path.dirname(file_directory_name), exist_ok=True) # Checks if the directory exists - if not, creates it
