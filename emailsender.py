@@ -44,13 +44,11 @@ def create_html_body():
             next_game = data["due_for_win"][team][1][0]
             next_opponent = data["due_for_win"][team][1][1]
             if next_opponent in data["due_for_win"]:
-                formatted_team = "<li>{} has lost {} in a row, but playing {} who is also due for a win.\
-                    <br>Recommended wager: <strong>Fade this game</strong>.</li><br>"\
+                formatted_team = "<li>{} has lost {} in a row, but playing {} who is also due for a win. <br>Recommended wager: <strong>Fade this game</strong>.</li><br>"\
                     .format(team, data["due_for_win"][team][0], next_opponent)
             elif next_opponent in data["due_for_loss"]:
                 next_opp_losses = int(data["due_for_loss"][next_opponent][0])
-                formatted_team = "<li>{} has lost {} in a row.\<br>Their next opponent, \
-                    {}, has won {} in a row and is due for a loss.<br>{}.<br>{}.</li><br>"\
+                formatted_team = "<li>{} has lost {} in a row.<br>Their next opponent, {}, has won {} in a row and is due for a loss.<br>{}.<br>{}.</li><br>"\
                     .format(team, data["due_for_win"][team][0], next_opponent, next_opp_losses, \
                     (get_recommended_units_for_double_bet(int(data["due_for_win"][team][0]), next_opp_losses)), next_game)
             else:
@@ -62,13 +60,11 @@ def create_html_body():
             next_game = data["due_for_loss"][team][1][0]
             next_opponent = data["due_for_loss"][team][1][1]
             if next_opponent in data["due_for_loss"]:
-                formatted_team = "<li>{} has won {} in a row, but playing {} who is also due for a loss.\
-                    <br>Recommended wager: <strong>Fade this game</strong>.</li><br>"\
+                formatted_team = "<li>{} has won {} in a row, but playing {} who is also due for a loss. <br>Recommended wager: <strong>Fade this game</strong>.</li><br>"\
                     .format(team, data["due_for_loss"][team][0], next_opponent)
             elif next_opponent in data["due_for_win"]:
                 next_opp_losses = int(data["due_for_win"][next_opponent][0])
-                formatted_team = "<li>{} has won {} in a row.<br>Their next opponent, \
-                    {}, has lost {} in a row and is due for a win.<br>Recommended wager: \
+                formatted_team = "<li>{} has won {} in a row.<br>Their next opponent, {}, has lost {} in a row and is due for a win.<br>Recommended wager: \
                     Wager is listed above in <strong>\"Teams due for win\"</strong> list under {}.<br>{}.</li><br>"\
                     .format(team, data["due_for_loss"][team][0], next_opponent, next_opp_losses, next_opponent, next_game)
             else:
